@@ -1,10 +1,10 @@
 from sonolus_fastapi import Sonolus
 
 app = Sonolus(
-    address='https://example.com',
-    port=8000,
-    enable_cors=True,
+    address='https://example.com', # サーバーアドレスを指定してください Specify your server address
+    port=8000, # サーバーポートを指定してください Specify your server port
+    enable_cors=True, # CORSを有効にするかどうか Whether to enable CORS
 )
 
 if __name__ == "__main__":
-    app.run()
+    app.run() # サーバーを起動します Start the server
