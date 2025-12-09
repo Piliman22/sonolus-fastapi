@@ -1,8 +1,8 @@
-from fastapi import FastAPI, staticfiles
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional, List, Dict, Any
 from .model.ServerOption import ServerForm
-from .model.sonolus_types import ItemType
 
 class Sonolus:
     def __init__(
@@ -54,19 +54,19 @@ class Sonolus:
         This is the server info router.
         """     
 
-    def info_router(self, item_type: ItemType):
+    def info_router(self):
         """
         Typeごとのinfoルーター
         This is the info router for each type.
         """
         
-    def list_router(self, item_type: ItemType):
+    def list_router(self):
         """
         Typeごとのlistルーター
         This is the list router for each type.
         """
         
-    def detail_router(self, item_type: ItemType):
+    def detail_router(self):
         """
         Typeごとのdetailルーター
         This is the detail router for each type.
@@ -77,7 +77,9 @@ class Sonolus:
         Sonolus packでパックされたものを読み込みます。
         Load a pack packed with Sonolus pack.
         """
-        self.app.mount('/sonolus/repository', staticfiles.StaticFiles(directory=path), name="repository")
+        import os
+        repository_path = os.path.join(path, 'repository')
+        self.app.mount('/sonolus/repository', StaticFiles(directory=repository_path), name="repository")
             
     def run(self):
         import uvicorn

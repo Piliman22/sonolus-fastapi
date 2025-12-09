@@ -1,7 +1,7 @@
 # Sonolus型定義のメインエクスポート
 
 # 共通型
-from model.common import Text, Icon, Tag, UseItemDefault, UseItemCustom
+from .common import Text, Icon, Tag, UseItemDefault, UseItemCustom
 
 # アイテム型
 from .items.post import PostItem
@@ -15,7 +15,7 @@ from .items.engine import EngineItem
 from .items.replay import ReplayItem
 
 # セクション型
-from model.sections import (
+from .sections import (
     ServerItemSection,
     ServerItemSectionTyped,
     PostSection,
