@@ -27,8 +27,8 @@ class ServerInfoSection(BaseModel):
 
 class ServerInfo(BaseModel):
     """Sonolusサーバー情報レスポンス - TypeScriptのServerInfoに相当"""
-    title: LocalizationText
-    description: Optional[LocalizationText] = None
+    title: str
+    description: Optional[str] = None
     buttons: List[ServerInfoButton] = []
     banner: Optional[Dict[str, Any]] = None
     configuration: ServerConfiguration = ServerConfiguration()
