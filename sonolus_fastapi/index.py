@@ -85,7 +85,7 @@ class Sonolus:
     def build_context(self, request: Request) -> SonolusContext:
         # リクエストからコンテキストを構築
         return SonolusContext(
-            user_handle=request.headers.get("Sonolus-User-Handle"),
+            user_session=request.headers.get("Sonolus-Session"),
             is_dev=self.dev
         )
     
