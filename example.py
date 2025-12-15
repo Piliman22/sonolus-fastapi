@@ -22,6 +22,8 @@ sonolus = Sonolus(
 )
 
 
+# ---------------------------------------- 
+
 # PostItemの例 Example of PostItem
 
 
@@ -40,8 +42,13 @@ post_item = PostItem(
 sonolus.ItemMemory.Post.push(post_item) # メモリにPostItemを追加 Add PostItem to memory
 
 
+
+# ---------------------------------------- 
+
 # Sonolusパックを読み込む Load Sonolus pack
 sonolus.load(freepackpath) # Sonolus packのパスを指定してください Specify the path to the Sonolus pack
+
+# ---------------------------------------- 
 
 # -- ハンドラーの登録 Register handlers
 
@@ -92,6 +99,11 @@ async def get_post_detail(ctx, name: str): # Postの詳細を取得 Get Post det
         leaderboards=[], # リーダーボードのリスト List of leaderboards
         sections=[], # セクションのリスト List of sections
     )
+
+# ----------------------------------------     
+ 
+# アイテムの一式のハンドラーを登録 Register item set handler 
+    
     
 @sonolus.background.info(ServerItemInfo)
 async def get_background_info(ctx): # Backgroundの情報を取得 Get Background info
@@ -125,7 +137,8 @@ async def get_background_detail(ctx, name: str): # Backgroundの詳細を取得 
         sections=[], # セクションのリスト List of sections
     )
     
-
+# ---------------------------------------- 
+    
 @sonolus.app.get("/hoge") # ルートエンドポイントを追加 Add root endpoint
 def huga():
     return {"message": "huga"}
