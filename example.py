@@ -5,6 +5,7 @@ from sonolus_fastapi import Sonolus
 from sonolus_fastapi.model.base import SonolusServerInfo, SonolusConfiguration, SonolusButton, SonolusButtonType
 from sonolus_fastapi.model.items.post import PostItem
 from sonolus_fastapi.model.ServerItemInfo import ServerItemInfo
+from sonolus_fastapi.model.ServerItemList import ServerItemList
 from sonolus_fastapi.model.sections import BackgroundSection
 from sonolus_fastapi.model.ServerItemDetails import ServerItemDetails
 from sonolus_fastapi.model.Request.authenticate import ServerAuthenticateRequest
@@ -119,6 +120,18 @@ async def get_background_info(ctx): # Backgroundの情報を取得 Get Backgroun
         searches=[], # 検索フォームのリスト List of search forms
         sections=[background_section], # セクションのリスト List of sections
         banner=None, # バナー Banner
+    )
+    
+@sonolus.background.list(ServerItemList) # Backgroundのリストハンドラーを登録 Register Background list handler
+async def get_background_list(ctx, query): # Backgroundのリストを取得 Get Background list
+    backgrounds = sonolus.ItemMemory.Background.list_all() # メモリから全てのBackgroundItemを取得 Get all BackgroundItems from memory
+    
+    # BackgroundItemオブジェクトを辞書に変換 Convert BackgroundItem objects to dictionaries
+    background_dicts = [bg.model_dump() for bg in backgrounds]
+    
+    return ServerItemList( # ServerItemListを返す Return ServerItemList
+        pageCount=1, # ページ数 Page count
+        items=background_dicts, # BackgroundItemのリスト（辞書形式） List of BackgroundItems (as dictionaries)
     )
     
 @sonolus.background.detail(ServerItemDetails) # Backgroundの詳細ハンドラーを登録 Register Background detail handler
