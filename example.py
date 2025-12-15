@@ -1,6 +1,6 @@
 import time
 
-from sonolus_fastapi import Sonolus
+from sonolus_fastapi import Sonolus, SonolusSpa
 from sonolus_fastapi.model.items.post import PostItem
 from sonolus_fastapi.pack import freepackpath
 
@@ -9,6 +9,9 @@ sonolus = Sonolus(
     port=8000, # サーバーポートを指定してください Specify your server port
     enable_cors=True, # CORSを有効にするかどうか Whether to enable CORS
 )
+
+spa = SonolusSpa(sonolus.app, './frontend') # SPA配信の設定
+spa.mount_spa() # SPA配信のマウント開始
 
 now = int(time.time() * 1000)
 

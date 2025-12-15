@@ -106,3 +106,25 @@ class Sonolus:
         import uvicorn
         print(f"Starting Sonolus server on port {self.port}...")
         uvicorn.run(self.app, host='0.0.0.0', port=self.port)
+
+class SonolusSpa:
+    def __init__(
+        self,
+        app: FastAPI,
+        path: str,
+        mount: str = "/",
+        fallback: str = "index.html"
+    ):
+        """
+        SPA配信
+        """
+
+        self.app = app
+        self.path = path
+        self.mount = mount
+        self.fallback = fallback
+
+    def mount_spa(self):
+        self.app.mount(
+            self.mount, StaticFiles(directory=self.path, html=True), name="spa"
+        )

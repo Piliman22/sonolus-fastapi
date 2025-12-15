@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from ..base import SonolusResourceLocator
 from ..common import Tag
+from enum import Enum
 
 SRL = SonolusResourceLocator
 
@@ -27,3 +28,13 @@ class PackBaseItem(BaseItem):
     author: LocalationText
     tags: List[Tag] = []
     description: LocalationText = LocalationText()
+
+class ItemType(str, Enum):
+    backgrounds = "backgrounds"
+    effects = "effects"
+    engines = "engines"
+    levels = "levels"
+    particles = "particles"
+    posts = "posts"
+    replais = "replais"
+    skins = "skins"
