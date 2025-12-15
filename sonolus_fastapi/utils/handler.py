@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from ..model.server_info import ServerInfo
+from .context import SonolusContext
+from .query import Query
 from typing import Callable, Awaitable, Generic, TypeVar, Any
 from pydantic import BaseModel
 
-Ctx = Any # あまり良くないが、一旦これで
-Query = Any # あまり良くないが、一旦これで
+Ctx = SonolusContext
+Query = Query
 
 T = TypeVar("T", bound=BaseModel)
 
