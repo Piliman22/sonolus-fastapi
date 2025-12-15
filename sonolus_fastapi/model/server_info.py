@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
-from .text import LocalizationText
 
 class ServerInfoButton(BaseModel):
     """サーバー情報ボタン - TypeScriptのServerInfoButtonに相当"""

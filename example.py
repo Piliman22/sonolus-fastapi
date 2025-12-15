@@ -1,6 +1,8 @@
 import time
 
-from sonolus_fastapi import Sonolus, SonolusSpa
+from fastapi import HTTPException
+from sonolus_fastapi import Sonolus
+from sonolus_fastapi.model.base import SonolusServerInfo, SonolusConfiguration, SonolusButton, SonolusButtonType
 from sonolus_fastapi.model.items.post import PostItem
 from sonolus_fastapi.model.ServerItemDetails import ServerItemDetails
 from sonolus_fastapi.pack import freepackpath
@@ -36,13 +38,36 @@ sonolus.ItemMemory.Post.push(post_item) # メモリにPostItemを追加 Add Post
 # Sonolusパックを読み込む Load Sonolus pack
 sonolus.load(freepackpath) # Sonolus packのパスを指定してください Specify the path to the Sonolus pack
 
+# -- ハンドラーの登録 Register handlers
 
+@sonolus.server.server_info(SonolusServerInfo) # サーバー情報ハンドラーを登録 Register server info handler
+async def get_server_info(ctx):
+    return SonolusServerInfo(
+        title="Example Sonolus Server",
+        description="This is an example Sonolus server.",
+        buttons=[
+            SonolusButton(type=SonolusButtonType.AUTHENTICATION),
+            SonolusButton(type=SonolusButtonType.POST),
+            SonolusButton(type=SonolusButtonType.LEVEL),
+            SonolusButton(type=SonolusButtonType.SKIN),
+            SonolusButton(type=SonolusButtonType.BACKGROUND),
+            SonolusButton(type=SonolusButtonType.EFFECT),
+            SonolusButton(type=SonolusButtonType.PARTICLE),
+            SonolusButton(type=SonolusButtonType.ENGINE),
+            SonolusButton(type=SonolusButtonType.CONFIGURATION)
+        ],
+        configuration=SonolusConfiguration(
+            options=[]
+        ),
+        banner=None,
+    )
 
 @sonolus.post.detail(ServerItemDetails) # Postの詳細ハンドラーを登録 Register Post detail handler
 async def get_post_detail(ctx, name: str): # Postの詳細を取得 Get Post details
     post = sonolus.ItemMemory.Post.get_name(name) # メモリからPostItemを取得 Get PostItem from memory
-    if post is None: # 存在しない場合はNoneを返す If not found,
-        return None # return None
+    
+    if post is None: # PostItemが見つからない場合 If PostItem not found
+        raise HTTPException(404, "Post item not found") # 404エラーを返す Return 404 error
     
     return ServerItemDetails( # ServerItemDetailsを返す Return ServerItemDetails
         item=post, # PostItem

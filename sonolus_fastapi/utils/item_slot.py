@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, TypeVar
 from pydantic import BaseModel
-from sonolus_fastapi.model.items import ItemType
+from ..model.items import ItemType
 from .handler import (
     InfoHandlerDescriptor,
     ListHandlerDescriptor,

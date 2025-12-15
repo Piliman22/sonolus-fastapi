@@ -14,6 +14,7 @@ from .memory import (
 from .model.ServerOption import ServerForm
 from .model.items import ItemType
 from .utils.item_namespace import ItemNamespace
+from .utils.server_namespace import ServerNamespace
 from .utils.pack import set_pack_memory
 from .utils.context import SonolusContext
 from .utils.query import Query
@@ -57,6 +58,8 @@ class Sonolus:
         self.headers = { "Sonolus-Version": self.version }
         
         self._handlers: dict[ItemType, dict[str, object]] = {}
+        self._server_handlers: dict[str, object] = {}
+        self.server = ServerNamespace(self)
         self.level = ItemNamespace(self, ItemType.level)
         self.skin = ItemNamespace(self, ItemType.skin)
         self.engine = ItemNamespace(self, ItemType.engine)
@@ -93,8 +96,14 @@ class Sonolus:
     def _register_handler(self, item_type: ItemType, kind: Kind, descriptor: object):
         self._handlers.setdefault(item_type, {})[kind] = descriptor
         
+    def _register_server_handler(self, kind: str, descriptor: object):
+        self._server_handlers[kind] = descriptor
+        
     def get_handler(self, item_type: ItemType, kind: Kind):
         return self._handlers.get(item_type, {}).get(kind)
+        
+    def get_server_handler(self, kind: str):
+        return self._server_handlers.get(kind)
 
     class ItemMemory:
         Background = BackgroundMemory

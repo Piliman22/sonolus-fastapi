@@ -20,6 +20,7 @@ class SonolusApi:
     # -------------------------
 
     def _register_routes(self):
+        self.router.get('/info')(self._server_info)
         self.router.get("/{item_type}/info")(self._info)
         self.router.get("/{item_type}/list")(self._list)
         self.router.get("/{item_type}/{name}")(self._detail)
@@ -27,6 +28,16 @@ class SonolusApi:
     # -------------------------
     # handlers
     # -------------------------
+    
+    async def _server_info(self, request: Request):
+        ctx = self.sonolus.build_context(request)
+        
+        handler = self.sonolus.get_server_handler("server_info")
+        if handler is None:
+            raise HTTPException(404, "server info handler not implemented")
+        
+        result = await handler.call(ctx)
+        return handler.response_model.model_validate(result)
 
     async def _info(self, item_type: ItemType, request: Request):
         ctx = self.sonolus.build_context(request)
