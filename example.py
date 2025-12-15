@@ -4,6 +4,8 @@ from fastapi import HTTPException
 from sonolus_fastapi import Sonolus
 from sonolus_fastapi.model.base import SonolusServerInfo, SonolusConfiguration, SonolusButton, SonolusButtonType
 from sonolus_fastapi.model.items.post import PostItem
+from sonolus_fastapi.model.ServerItemInfo import ServerItemInfo
+from sonolus_fastapi.model.sections import BackgroundSection
 from sonolus_fastapi.model.ServerItemDetails import ServerItemDetails
 from sonolus_fastapi.model.Request.authenticate import ServerAuthenticateRequest
 from sonolus_fastapi.model.Response.authenticate import ServerAuthenticateResponse
@@ -91,6 +93,37 @@ async def get_post_detail(ctx, name: str): # Postの詳細を取得 Get Post det
         sections=[], # セクションのリスト List of sections
     )
     
+@sonolus.background.info(ServerItemInfo)
+async def get_background_info(ctx): # Backgroundの情報を取得 Get Background info
+    
+    background_section = BackgroundSection(
+        title="Background",
+        itemType="background", 
+        items=sonolus.ItemMemory.Background.list_all() # メモリから全てのBackgroundItemを取得 Get all BackgroundItems from memory
+    )
+    
+    return ServerItemInfo( # ServerItemInfoを返す Return ServerItemInfo
+        creates=[], # 作成フォームのリスト List of create forms
+        searches=[], # 検索フォームのリスト List of search forms
+        sections=[background_section], # セクションのリスト List of sections
+        banner=None, # バナー Banner
+    )
+    
+@sonolus.background.detail(ServerItemDetails) # Backgroundの詳細ハンドラーを登録 Register Background detail handler
+async def get_background_detail(ctx, name: str): # Backgroundの詳細を取得 Get Background
+    background = sonolus.ItemMemory.Background.get_name(name) # メモリからBackgroundItemを取得 Get BackgroundItem from memory
+    
+    if background is None: # BackgroundItemが見つからない場合 If BackgroundItem not found
+        raise HTTPException(404, "Background item not found") # 404エラーを返す Return 404 error
+    
+    return ServerItemDetails( # ServerItemDetailsを返す Return ServerItemDetails
+        item=background, # BackgroundItem
+        description="This is the detail of the example background item.", # 詳細説明 Detail description
+        actions=[], # アクションのリスト List of actions
+        hasCommunity=False, # コミュニティがあるかどうか Whether there is a community
+        leaderboards=[], # リーダーボードのリスト List of leaderboards
+        sections=[], # セクションのリスト List of sections
+    )
     
 
 @sonolus.app.get("/hoge") # ルートエンドポイントを追加 Add root endpoint
