@@ -15,7 +15,7 @@ class Sonolus:
         effect_search: Optional[ServerForm] = None,
         particle_search: Optional[ServerForm] = None,
         engine_search: Optional[ServerForm] = None,
-        version: str = "1.0.1",
+        version: str = "1.0.2",
         enable_cors: bool = True,
     ):
         """
@@ -36,6 +36,8 @@ class Sonolus:
         # self.sonolus_router = SonolusRouter(version=version)
         self.version = version
         
+        self.headers = { "Sonolus-Version": self.version }
+
         if enable_cors:
             self.app.add_middleware(
                 CORSMiddleware,
@@ -83,4 +85,5 @@ class Sonolus:
             
     def run(self):
         import uvicorn
+        print(f"Starting Sonolus server on port {self.port}...")
         uvicorn.run(self.app, host='0.0.0.0', port=self.port)
