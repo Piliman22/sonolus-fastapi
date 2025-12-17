@@ -165,8 +165,8 @@ def huga():
 
 spa = SonolusSpa(
     sonolus.app,
-    path="./test",
-    mount="/"
+    path="./test", # SPAの静的ファイルのパス Path to SPA static files
+    mount="/" # マウントパス Mount path
 )
 
 if __name__ == "__main__":
