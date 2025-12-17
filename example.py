@@ -1,7 +1,7 @@
 import time
 
 from fastapi import HTTPException
-from sonolus_fastapi import Sonolus
+from sonolus_fastapi import Sonolus, SonolusSpa
 from sonolus_fastapi.model.text import SonolusText
 from sonolus_fastapi.model.icon import SonolusIcon
 from sonolus_fastapi.utils.context import SonolusContext
@@ -159,5 +159,16 @@ async def get_background_detail(ctx, name: str): # Backgroundの詳細を取得 
 def huga():
     return {"message": "huga"}
 
+# ----------------------------------------
+
+#  SPA配信
+
+spa = SonolusSpa(
+    sonolus.app,
+    path="./test",
+    mount="/"
+)
+
 if __name__ == "__main__":
+    spa.mount_spa() # SPAをマウントします Mount the SPA
     sonolus.run() # サーバーを起動します Start the server
