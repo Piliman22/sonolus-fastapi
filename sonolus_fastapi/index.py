@@ -189,6 +189,23 @@ class SonolusSpa:
         self.fallback = fallback
 
     def mount_spa(self):
+        import os
+        from fastapi import HTTPException
+        from fastapi.responses import FileResponse
+        
         self.app.mount(
-            self.mount, StaticFiles(directory=self.path, html=True), name="spa"
+            "/static", StaticFiles(directory=self.path), name="static"
         )
+        
+        @self.app.get("/{full_path:path}")
+        async def spa_handler(full_path: str):
+            file_path = os.path.join(self.path, full_path)
+            
+            if os.path.exists(file_path) and os.path.isfile(file_path):
+                return FileResponse(file_path)
+            
+            fallback_path = os.path.join(self.path, self.fallback)
+            if os.path.exists(fallback_path):
+                return FileResponse(fallback_path)
+            
+            raise HTTPException(status_code=404, detail="File not found")
