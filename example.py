@@ -2,6 +2,7 @@ import time
 
 from fastapi import HTTPException
 from sonolus_fastapi import Sonolus, SonolusSpa
+from sonolus_fastapi.backend import StorageBackend
 from sonolus_fastapi.model.text import SonolusText
 from sonolus_fastapi.model.icon import SonolusIcon
 from sonolus_fastapi.utils.context import SonolusContext
@@ -25,6 +26,7 @@ sonolus = Sonolus(
     enable_cors=True, # CORSを有効にするかどうか Whether to enable CORS
     dev=True, # 開発モード Development mode
     session_store=MemorySessionStore(), # セッションストアを指定 Specify session store
+    backend=StorageBackend.MEMORY # ストレージバックエンドを指定 Specify storage backend
 )
 
 # ---------------------------------------- 
@@ -44,7 +46,7 @@ post_item = PostItem(
     time=now,
     thumbnail=None,
 )
-sonolus.ItemMemory.Post.push(post_item) # メモリにPostItemを追加 Add PostItem to memory
+sonolus.items.post.add(post_item)
 
 
 

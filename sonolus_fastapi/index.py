@@ -11,6 +11,16 @@ from .memory import (
     LevelMemory,
     PostMemory
 )
+from .model.items import (
+    BackgroundItem,
+    EffectItem,
+    ParticleItem,
+    SkinItem,
+    EngineItem,
+    LevelItem,
+    PostItem
+)
+from .backend import StorageBackend, StoreFactory
 from .model.ServerOption import ServerForm
 from .model.items import ItemType
 from .utils.item_namespace import ItemNamespace
@@ -38,6 +48,8 @@ class Sonolus:
         engine_search: Optional[ServerForm] = None,
         version: str = "1.0.2",
         enable_cors: bool = True,
+        backend: StorageBackend = StorageBackend.MEMORY,
+        **backend_options,
     ):
         """
         
@@ -52,12 +64,14 @@ class Sonolus:
             engine_search: エンジン検索フォーム Engine search form
             enable_cors: CORSを有効にするかどうか Whether to enable CORS
         """
+        factory = StoreFactory(backend, **backend_options)
+        
         self.app = FastAPI()
         self.port = port
         self.address = address
         self.dev = dev
         self.version = version
-        self.headers = { "Sonolus-Version": self.version }
+        self.items = ItemStores(factory)
         
         self._handlers: dict[ItemType, dict[str, object]] = {}
         self._server_handlers: dict[str, object] = {}
@@ -139,15 +153,6 @@ class Sonolus:
             
             # ファイルが見つからない場合は404エラー
             raise HTTPException(status_code=404, detail="File not found")
-
-    class ItemMemory:
-        Background = BackgroundMemory
-        Effect = EffectMemory
-        Particle = ParticleMemory
-        Skin = SkinMemory
-        Engine = EngineMemory
-        Level = LevelMemory
-        Post = PostMemory
             
     def load(self, path: str):
         """
@@ -209,3 +214,19 @@ class SonolusSpa:
                 return FileResponse(fallback_path)
             
             raise HTTPException(status_code=404, detail="File not found")
+        
+# -------------------------
+
+class ItemStores:
+    def __init__(self, factory: StoreFactory):
+        self.post = factory.create(PostItem)
+        self.level = factory.create(LevelItem)
+        self.engine = factory.create(EngineItem)
+        self.skin = factory.create(SkinItem)
+        self.background = factory.create(BackgroundItem)
+        self.effect = factory.create(EffectItem)
+        self.particle = factory.create(ParticleItem)
+    
+    def override(self, **stores):
+        for key, store in stores.items():
+            setattr(self, key, store)
