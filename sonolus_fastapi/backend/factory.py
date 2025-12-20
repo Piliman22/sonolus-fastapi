@@ -1,6 +1,7 @@
 from .backend import StorageBackend
 from .memory import MemoryItemStore
 from .json import JsonItemStore
+from .database import DatabaseItemStore
 
 class StoreFactory:
     def __init__(self, backend: StorageBackend, **options):
@@ -16,5 +17,7 @@ class StoreFactory:
             return MemoryItemStore(item_cls)
         elif self.backend == StorageBackend.JSON:
             return JsonItemStore(item_cls, path=self.options.get("path", "./data"))
+        elif self.backend == StorageBackend.DATABASE:
+            return DatabaseItemStore(item_cls, url=self.options.get("url", "sqlite:///./data/database.db"))
         
         raise ValueError(f"Unsupported storage backend: {self.backend}")

@@ -84,7 +84,7 @@ async def list_post(ctx, query) -> ServerItemList:
     posts = sonolus.items.post.list()
     
     return ServerItemList(
-        pageCount=1,
+        pagecount=1,
         items=posts
     )
     

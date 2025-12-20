@@ -1,10 +1,15 @@
 import json
-from ..model.items.background import BackgroundPackItem, BackgroundItem
-from ..model.items.effect import EffectPackItem, EffectItem
-from ..model.items.particle import ParticlePackItem, ParticleItem
-from ..model.items.skin import SkinPackItem, SkinItem
+from typing import TYPE_CHECKING
+from ..model.items.background import BackgroundItem
+from ..model.items.effect import EffectItem
+from ..model.items.particle import ParticleItem
+from ..model.items.skin import SkinItem
+from ..model.items.post import PostItem
 from ..model.pack import PackModel
-from ..memory import BackgroundMemory, EffectMemory, ParticleMemory, SkinMemory
+from ..backend import StorageBackend
+
+if TYPE_CHECKING:
+    from ..index import Sonolus
 
 def pack_2_ItemModel(pack: PackModel):
     """
@@ -78,7 +83,7 @@ def pack_2_ItemModel(pack: PackModel):
     return background_items, effect_items, particle_items, skin_items
 
 
-def set_pack_memory(db_path: str):
+def set_pack_memory(db_path: str, sonolus: "Sonolus"):
     """
     パックのjsonデータをメモリにセットします。
     """
@@ -89,11 +94,11 @@ def set_pack_memory(db_path: str):
     background_items, effect_items, particle_items, skin_items = pack_2_ItemModel(pack)
 
     for item in background_items:
-        BackgroundMemory.push(item)
+        sonolus.items.background.add(item)
     for item in effect_items:
-        EffectMemory.push(item)
+        sonolus.items.effect.add(item)
     for item in particle_items:
-        ParticleMemory.push(item)
+        sonolus.items.particle.add(item)
     for item in skin_items:
-        SkinMemory.push(item)
+        sonolus.items.skin.add(item)
     

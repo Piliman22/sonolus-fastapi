@@ -162,7 +162,7 @@ class Sonolus:
         import os
         repository_path = os.path.join(path, 'repository')
         db_path = os.path.join(path, 'db.json')
-        set_pack_memory(db_path)
+        set_pack_memory(db_path, self)
         
         if repository_path not in self._repository_paths:
             self._repository_paths.append(repository_path)

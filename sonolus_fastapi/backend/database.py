@@ -1,0 +1,69 @@
+import json
+from typing import TypeVar, Generic, List, Optional
+from sqlalchemy import create_engine, text
+
+T = TypeVar("T")
+
+class DatabaseItemStore(Generic[T]):
+    def __init__(self, item_cls, url: str):
+        self.item_cls = item_cls
+        self.item_type = item_cls.__name__.lower()  # アイテムタイプを取得
+        self.engine = create_engine(url, future=True)
+        
+        self._init_table()
+        
+    def _init_table(self):
+        with self.engine.connect() as conn:
+            conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS items(
+                    name TEXT NOT NULL,
+                    item_type TEXT NOT NULL,
+                    data TEXT NOT NULL,
+                    PRIMARY KEY (name, item_type)
+                )
+            """))
+            conn.commit()
+            
+    def get(self, name: str) -> Optional[T]:
+        with self.engine.connect() as conn:
+            row = conn.execute(
+                text("SELECT data FROM items WHERE name = :name AND item_type = :item_type"),
+                {"name": name, "item_type": self.item_type}
+            ).fetchone()
+            
+            if row is None:
+                return None
+            
+            return self.item_cls.model_validate(json.loads(row[0]))
+        
+    def list(self) -> List[T]:
+        with self.engine.begin() as conn:
+            rows = conn.execute(
+                text("SELECT data FROM items WHERE item_type = :item_type"),
+                {"item_type": self.item_type}
+            ).fetchall()
+
+        return [
+            self.item_cls.model_validate(json.loads(row[0]))
+            for row in rows
+        ]
+        
+    def add(self, item: T):
+        data = json.dumps(item.model_dump(), ensure_ascii=False)
+
+        with self.engine.begin() as conn:
+            conn.execute(
+                text("""
+                    INSERT INTO items (name, item_type, data)
+                    VALUES (:name, :item_type, :data)
+                    ON CONFLICT(name, item_type) DO UPDATE SET data=:data
+                """),
+                {"name": item.name, "item_type": self.item_type, "data": data}
+            )
+            
+    def delete(self, name: str):
+        with self.engine.begin() as conn:
+            conn.execute(
+                text("DELETE FROM items WHERE name=:name AND item_type=:item_type"),
+                {"name": name, "item_type": self.item_type}
+            )

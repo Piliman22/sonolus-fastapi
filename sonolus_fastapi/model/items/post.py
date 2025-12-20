@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, List
 from ..base import SonolusResourceLocator
 from ..common import Tag
@@ -9,7 +9,7 @@ SRL = SonolusResourceLocator
 class PostItem(BaseItem):
     """PostItemはポストの情報を提供"""
     version: int = 1
-    time: int  # タイムスタンプ
+    time: int = Field(default_factory=lambda: 0)  # タイムスタンプ（デフォルト値0）
     thumbnail: Optional[SRL] = None
 
 class PostPackItem(PackBaseItem):
