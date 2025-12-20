@@ -95,7 +95,7 @@ async def authenticate(ctx: SonolusContext[ServerAuthenticateRequest]): # 認証
 
 @sonolus.post.detail(ServerItemDetails) # Postの詳細ハンドラーを登録 Register Post detail handler
 async def get_post_detail(ctx, name: str): # Postの詳細を取得 Get Post details
-    post = sonolus.ItemMemory.Post.get_name(name) # メモリからPostItemを取得 Get PostItem from memory
+    post = sonolus.items.post.get(name) # メモリからPostItemを取得 Get PostItem from memory
     
     if post is None: # PostItemが見つからない場合 If PostItem not found
         raise HTTPException(404, "Post item not found") # 404エラーを返す Return 404 error
@@ -120,7 +120,7 @@ async def get_background_info(ctx): # Backgroundの情報を取得 Get Backgroun
     background_section = BackgroundSection(
         title=SonolusText.BACKGROUND,
         icon=SonolusIcon.Heart,
-        items=sonolus.ItemMemory.Background.list_all() # メモリから全てのBackgroundItemを取得 Get all BackgroundItems from memory
+        items=sonolus.items.background.list() # メモリから全てのBackgroundItemを取得 Get all BackgroundItems from memory
     )
     
     return ServerItemInfo( # ServerItemInfoを返す Return ServerItemInfo
@@ -132,7 +132,7 @@ async def get_background_info(ctx): # Backgroundの情報を取得 Get Backgroun
     
 @sonolus.background.list(ServerItemList) # Backgroundのリストハンドラーを登録 Register Background list handler
 async def get_background_list(ctx, query): # Backgroundのリストを取得 Get Background list
-    backgrounds = sonolus.ItemMemory.Background.list_all() # メモリから全てのBackgroundItemを取得 Get all BackgroundItems from memory
+    backgrounds = sonolus.items.background.list() # メモリから全てのBackgroundItemを取得 Get all BackgroundItems from memory
     
     return ServerItemList( # ServerItemListを返す Return ServerItemList
         pageCount=1, # ページ数 Page count
@@ -141,7 +141,7 @@ async def get_background_list(ctx, query): # Backgroundのリストを取得 Get
     
 @sonolus.background.detail(ServerItemDetails) # Backgroundの詳細ハンドラーを登録 Register Background detail handler
 async def get_background_detail(ctx, name: str): # Backgroundの詳細を取得 Get Background
-    background = sonolus.ItemMemory.Background.get_name(name) # メモリからBackgroundItemを取得 Get BackgroundItem from memory
+    background = sonolus.items.background.get(name) # メモリからBackgroundItemを取得 Get BackgroundItem from memory
     
     if background is None: # BackgroundItemが見つからない場合 If BackgroundItem not found
         raise HTTPException(404, "Background item not found") # 404エラーを返す Return 404 error

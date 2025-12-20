@@ -18,8 +18,9 @@ sonolus = Sonolus(
     address="https://example.com",
     port=8000,
     dev=False,
-    backend=StorageBackend.JSON,
-    backend_options={"path": "./data"}   
+    enable_cors=True,
+    backend=StorageBackend.DATABASE, 
+    backend_options={"url": "sqlite:////data/sonolus.db"}
 )
 
 sonolus.load(freepackpath)
