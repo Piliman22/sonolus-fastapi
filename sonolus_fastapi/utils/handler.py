@@ -52,7 +52,19 @@ class DetailHandlerDescriptor(Generic[T]):
 
     async def call(self, ctx: Ctx, name: str) -> T:
         return await self.fn(ctx, name)
-    
+
+class ActionHandlerDescriptor(Generic[T]):
+    def __init__(
+        self,
+        fn: Callable[[Ctx, str, Any], Awaitable[T]],
+        response_model: type[T],
+    ):
+        self.fn = fn
+        self.response_model: type[T] = response_model
+
+    async def call(self, ctx: Ctx, name: str, action_request: type[T]) -> T:
+        return await self.fn(ctx, name, action_request)
+
 class HandlerDescriptor(Generic[T]):
     def __init__(
         self,

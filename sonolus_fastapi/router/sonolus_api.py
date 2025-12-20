@@ -25,6 +25,7 @@ class SonolusApi:
         self.router.get("/{item_type}/info")(self._info)
         self.router.get("/{item_type}/list")(self._list)
         self.router.get("/{item_type}/{name}")(self._detail)
+        self.router.post("/{item_type}/{name}/submit")(self._actions)
 
     # -------------------------
     # utility methods
@@ -96,4 +97,15 @@ class SonolusApi:
             raise HTTPException(404, "detail handler not implemented")
 
         result = await handler.call(ctx, name)
+        return handler.response_model.model_validate(result)
+
+    async def _actions(self, item_type: ItemType, name: str, request: Request):
+        ctx = self.sonolus.build_context(request)
+        action_request = await self._parse_request_body(request)
+
+        handler = self.sonolus.get_handler(item_type, "actions")
+        if handler is None:
+            raise HTTPException(404, "actions handler not implemented")
+
+        result = await handler.call(ctx, name, action_request)
         return handler.response_model.model_validate(result)
