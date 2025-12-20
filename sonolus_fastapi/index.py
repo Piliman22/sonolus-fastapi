@@ -13,6 +13,7 @@ from .model.items import (
 )
 from .backend import StorageBackend, StoreFactory
 from .model.ServerOption import ServerForm
+from .search.registry import SearchRegistry
 from .model.items import ItemType
 from .utils.item_namespace import ItemNamespace
 from .utils.server_namespace import ServerNamespace
@@ -31,12 +32,6 @@ class Sonolus:
         port: int,
         dev: bool = False,
         session_store: Optional[SessionStore] = None,
-        level_search: Optional[ServerForm] = None,
-        skin_search: Optional[ServerForm] = None,
-        background_search: Optional[ServerForm] = None,
-        effect_search: Optional[ServerForm] = None,
-        particle_search: Optional[ServerForm] = None,
-        engine_search: Optional[ServerForm] = None,
         version: str = "1.0.2",
         enable_cors: bool = True,
         backend: StorageBackend = StorageBackend.MEMORY,
@@ -79,6 +74,7 @@ class Sonolus:
         self.replay = ItemNamespace(self, ItemType.replay)
 
         self.session_store = session_store or MemorySessionStore()
+        self.search = SearchRegistry()
         
         # リポジトリファイルを提供するカスタムエンドポイントを先に追加
         self._setup_repository_handler()
@@ -110,10 +106,21 @@ class Sonolus:
             request=request_body,
             is_dev=self.dev
         )
-    
-    def build_query(self, item_type: ItemType, request: Request) -> Query:
-        # クエリパラメータを取得してQueryオブジェクトを構築
-        return Query(dict(request.query_params))
+        
+    def build_query(self, item_type, request):
+        key = item_type.value
+        form = self.search.get_form(key)
+        model = self.search.get_query_model(key)
+
+        raw = {
+            k: v[0] if isinstance(v, list) else v
+            for k, v in request.query_params.multi_items()
+        }
+
+        if model is None:
+            return raw
+
+        return model.model_validate(raw)
 
     def _register_handler(self, item_type: ItemType, kind: Kind, descriptor: object):
         self._handlers.setdefault(item_type, {})[kind] = descriptor

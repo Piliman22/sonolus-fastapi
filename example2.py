@@ -12,7 +12,20 @@ from sonolus_fastapi.model.sections import PostSection
 from sonolus_fastapi.model import ServerItemInfo, ServerItemList, ServerItemDetails, SonolusServerInfo, SonolusConfiguration, SonolusButton, SonolusButtonType
 from sonolus_fastapi.model.Response.ServerSubmitItemActionResponse import ServerSubmitItemActionResponse
 
+from sonolus_fastapi.model.ServerOption import ServerForm, ServerTextOption, ServerSliderOption
+from sonolus_fastapi.model.text import SonolusText
+from sonolus_fastapi.model.icon import SonolusIcon
+
 from sonolus_fastapi.pack import freepackpath
+
+# 検索設定を追加
+simple_search = ServerForm(
+    type="quick",
+    title=SonolusText.ADVANCED,
+    icon="quick",
+    requireConfirmation=False,
+    options=[]
+)
 
 sonolus = Sonolus(
     address="https://example.com",
@@ -22,6 +35,9 @@ sonolus = Sonolus(
     backend=StorageBackend.DATABASE, 
     backend_options={"url": "sqlite:////data/sonolus.db"}
 )
+
+# 検索設定を登録
+sonolus.search.post = simple_search
 
 sonolus.load(freepackpath)
 
@@ -85,7 +101,7 @@ async def list_post(ctx, query) -> ServerItemList:
     posts = sonolus.items.post.list()
     
     return ServerItemList(
-        pagecount=1,
+        pageCount=1,
         items=posts
     )
     

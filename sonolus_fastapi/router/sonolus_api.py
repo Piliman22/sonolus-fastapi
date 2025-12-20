@@ -83,10 +83,8 @@ class SonolusApi:
         query = self.sonolus.build_query(item_type, request)
 
         handler = self.sonolus.get_handler(item_type, "list")
-        if handler is None:
-            raise HTTPException(404, "list handler not implemented")
-
         result = await handler.call(ctx, query)
+
         return handler.response_model.model_validate(result)
 
     async def _detail(self, item_type: ItemType, name: str, request: Request):
