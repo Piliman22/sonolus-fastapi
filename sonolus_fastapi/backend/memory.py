@@ -11,6 +11,9 @@ class MemoryItemStore(Generic[T]):
         return self._data.get(name)
     
     def list(self, limit: int = 20, offset: int = 0) -> List[T]:
+        if limit > 20:
+            limit = 20  # 最大20件に制限
+            
         items = list(self._data.values())
         return items[offset:offset + limit]
     

@@ -37,6 +37,9 @@ class DatabaseItemStore(Generic[T]):
             return self.item_cls.model_validate(json.loads(row[0]))
         
     def list(self, limit: int = 20, offset: int = 0) -> List[T]:
+        if limit > 20:
+            limit = 20  # 最大20件に制限
+        
         with self.engine.begin() as conn:
             rows = conn.execute(
                 text("SELECT data FROM items WHERE item_type = :item_type LIMIT :limit OFFSET :offset"),
