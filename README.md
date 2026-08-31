@@ -3,7 +3,7 @@
 ## Install
 
 ```bash
-pip insatll sonolus-fastapi
+pip install sonolus-fastapi
 ```
 
 ## Usage
